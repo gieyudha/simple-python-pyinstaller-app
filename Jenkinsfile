@@ -15,6 +15,9 @@ node {
             }
         }
     }
+    stage("Manual Approval") {
+        input message: 'Lanjutkan ke tahap Deploy?'
+    }
     stage('Deploy') {
         boolean result = true
         docker.image('cdrx/pyinstaller-linux:python2').inside {
@@ -26,6 +29,7 @@ node {
 
             if(result == true){
                 archiveArtifacts 'dist/add2vals'
+                sleep(time: 1, unit: "MINUTES")
             }
         }
     }
