@@ -16,15 +16,15 @@ node {
         }
     }
     stage('Deploy') {
-        boolean status = true
+        boolean result = true
         docker.image('cdrx/pyinstaller-linux:python2').inside {
             try {
                 sh 'pyinstaller --onefile sources/add2vals.py'
             } catch (e) {
-                status = false
+                result = false
             } 
 
-            if(status == true){
+            if(result == true){
                 archiveArtifacts 'dist/add2vals'
             }
         }
