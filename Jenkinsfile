@@ -1,7 +1,7 @@
 node {
     stage('Build') {
         docker.image('python:2-alpine').inside {
-        sh 'python -m py_compile sources/add2vals.py sources/calc.py'
+            sh 'python -m py_compile sources/add2vals.py sources/calc.py'
         }
     }
     stage('Test') {
@@ -12,6 +12,20 @@ node {
                 throw e
             } finally {
                 junit 'test-reports/results.xml'
+            }
+        }
+    }
+    stage('Deploy') {
+        boolean status = true
+        docker.image('cdrx/pyinstaller-linux:python2').inside {
+            try {
+                sh 'pyinstaller --onefile sources/add2vals.py'
+            } catch (e) {
+                status = false
+            } 
+
+            if(status == true){
+                archiveArtifacts 'dist/add2vals'
             }
         }
     }
